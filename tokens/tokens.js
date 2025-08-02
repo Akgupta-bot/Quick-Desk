@@ -1,169 +1,209 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Sample questions data
-  const questions = [
+  // Sample tokens data
+  const tokens = [
     {
       id: 1,
-      title: "How do I reset my password?",
-      excerpt: "I'm having trouble resetting my password. The reset link doesn't seem to work...",
-      votes: 12,
+      title: "Login issues after recent update",
+      excerpt: "I'm unable to login to my account after the latest app update. Getting error 500.",
       status: "open",
-      tags: ["technical", "authentication"],
-      answers: 5,
-      views: 42,
+      category: "technical",
       author: "John Doe",
-      time: "2 hours ago"
+      time: "2 hours ago",
+      content: "After updating the app to version 2.4.1, I'm unable to login to my account. Every time I try to login, I get an error 500. I've tried resetting my password but the issue persists. This is preventing me from accessing my work.",
+      replies: []
     },
     {
       id: 2,
-      title: "When will the new feature be released?",
-      excerpt: "I saw the roadmap mentioned a new dashboard feature. Is there an ETA for this release?",
-      votes: 8,
-      status: "open",
-      tags: ["feature", "roadmap"],
-      answers: 3,
-      views: 28,
+      title: "Billing discrepancy for May subscription",
+      excerpt: "I was charged twice for my monthly subscription in May.",
+      status: "in-progress",
+      category: "billing",
       author: "Sarah Smith",
-      time: "5 hours ago"
+      time: "1 day ago",
+      content: "I noticed that my credit card was charged twice for the monthly subscription fee in May. The first charge was on May 1st for $9.99 and the second charge was on May 3rd for the same amount. I only signed up for one subscription.",
+      replies: [
+        {
+          author: "Support Agent",
+          time: "12 hours ago",
+          content: "We've identified the issue and are working on a refund for the duplicate charge."
+        }
+      ]
     },
     {
       id: 3,
-      title: "Billing issue for annual subscription",
-      excerpt: "I was charged twice for my annual subscription. How can I get a refund for the duplicate charge?",
-      votes: 15,
-      status: "closed",
-      tags: ["billing", "payment"],
-      answers: 7,
-      views: 64,
+      title: "Feature request: Dark mode",
+      excerpt: "Would love to see a dark mode option in the settings.",
+      status: "resolved",
+      category: "general",
       author: "Mike Johnson",
-      time: "2 days ago"
+      time: "3 days ago",
+      content: "The current white interface is too bright for nighttime use. Please consider adding a dark mode option in the settings panel. Many other apps have this feature and it would be great for eye strain.",
+      replies: [
+        {
+          author: "Support Agent",
+          time: "2 days ago",
+          content: "Thank you for your suggestion! We've added this to our roadmap for the next update."
+        },
+        {
+          author: "Support Agent",
+          time: "1 day ago",
+          content: "Update: Dark mode has been implemented and will be available in version 2.5.0 releasing next week."
+        }
+      ]
     }
   ];
 
   // DOM Elements
-  const questionsList = document.getElementById('questionsList');
-  const askQuestionBtn = document.getElementById('askQuestionBtn');
-  const askDialog = document.getElementById('askDialog');
-  const closeDialog = document.getElementById('closeDialog');
-  const dialogQuestionForm = document.getElementById('dialogQuestionForm');
-  const dialogTagInput = document.getElementById('dialogTagInput');
-  const dialogTagsContainer = document.getElementById('dialogTagsContainer');
+  const tokensList = document.getElementById('tokensList');
+  const createTokenBtn = document.getElementById('createTokenBtn');
+  const createTokenDialog = document.getElementById('createTokenDialog');
+  const closeTokenDialog = document.getElementById('closeTokenDialog');
+  const tokenForm = document.getElementById('tokenForm');
+  const tokenDetailDialog = document.getElementById('tokenDetailDialog');
+  const closeTokenDetail = document.getElementById('closeTokenDetail');
+  const tokenDetailTitle = document.getElementById('tokenDetailTitle');
+  const tokenDetailContent = document.getElementById('tokenDetailContent');
+  const tokenAuthor = document.getElementById('tokenAuthor');
+  const tokenTime = document.getElementById('tokenTime');
+  const tokenCategory = document.getElementById('tokenCategory');
+  const tokenStatusIndicator = document.getElementById('tokenStatusIndicator');
+  const tokenStatusText = document.getElementById('tokenStatusText');
+  const tokenShareLink = document.getElementById('tokenShareLink');
+  const copyLinkBtn = document.getElementById('copyLinkBtn');
+  const adminSection = document.getElementById('adminSection');
+  const agentReply = document.getElementById('agentReply');
+  const submitReplyBtn = document.getElementById('submitReplyBtn');
+  const resolveTokenBtn = document.getElementById('resolveTokenBtn');
   const searchBox = document.querySelector('.search-box input');
   const categoryDropdown = document.querySelectorAll('.dropdown')[0];
-  const sortDropdown = document.querySelectorAll('.dropdown')[1];
-  const statusDropdown = document.querySelectorAll('.dropdown')[2];
+  const statusDropdown = document.querySelectorAll('.dropdown')[1];
   const viewOptions = document.querySelectorAll('.view-options span');
 
   // Current filter state
   let currentFilters = {
     search: '',
     category: 'All Categories',
-    sort: 'Most Recent',
-    status: 'All Questions',
+    status: 'All Statuses',
     view: 'Recent'
   };
 
+  // Current user role (change to 'admin' to see admin features)
+  const currentUserRole = 'user'; // or 'admin'
+
   // Initialize the app
   function init() {
-    renderQuestions();
+    renderTokens();
     setupEventListeners();
+    
+    // Show admin section if user is admin
+    if (currentUserRole === 'admin') {
+      adminSection.style.display = 'block';
+    }
   }
 
-  // Render questions based on current filters
-  function renderQuestions() {
-    questionsList.innerHTML = '';
+  // Render tokens based on current filters
+  function renderTokens() {
+    tokensList.innerHTML = '';
     
-    let filteredQuestions = [...questions];
+    let filteredTokens = [...tokens];
     
     // Apply filters
     if (currentFilters.search) {
-      filteredQuestions = filteredQuestions.filter(q => 
-        q.title.toLowerCase().includes(currentFilters.search.toLowerCase()) || 
-        q.excerpt.toLowerCase().includes(currentFilters.search.toLowerCase())
+      filteredTokens = filteredTokens.filter(t => 
+        t.title.toLowerCase().includes(currentFilters.search.toLowerCase()) || 
+        t.excerpt.toLowerCase().includes(currentFilters.search.toLowerCase())
       );
     }
     
     if (currentFilters.category !== 'All Categories') {
-      filteredQuestions = filteredQuestions.filter(q => 
-        q.tags.includes(currentFilters.category.toLowerCase().replace(' ', '-'))
+      filteredTokens = filteredTokens.filter(t => 
+        t.category === currentFilters.category.toLowerCase().replace(' ', '-')
       );
     }
     
-    if (currentFilters.status !== 'All Questions') {
-      filteredQuestions = filteredQuestions.filter(q => 
-        q.status === currentFilters.status.toLowerCase()
+    if (currentFilters.status !== 'All Statuses') {
+      filteredTokens = filteredTokens.filter(t => 
+        t.status === currentFilters.status.toLowerCase().replace(' ', '-')
       );
     }
     
     // Apply sorting
-    switch(currentFilters.sort) {
-      case 'Most Votes':
-        filteredQuestions.sort((a, b) => b.votes - a.votes);
+    switch(currentFilters.view) {
+      case 'Priority':
+        // Sort by status (open first, then in-progress, then resolved)
+        const statusOrder = { 'open': 1, 'in-progress': 2, 'resolved': 3 };
+        filteredTokens.sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
         break;
-      case 'Most Active':
-        filteredQuestions.sort((a, b) => b.answers - a.answers);
+      case 'Unassigned':
+        // Filter unassigned tokens (none in our sample data)
+        filteredTokens = filteredTokens.filter(t => !t.assignedTo);
         break;
-      case 'Unanswered':
-        filteredQuestions = filteredQuestions.filter(q => q.answers === 0);
-        break;
-      default: // Most Recent
-        filteredQuestions.sort((a, b) => new Date(b.time) - new Date(a.time));
+      default: // Recent
+        filteredTokens.sort((a, b) => new Date(b.time) - new Date(a.time));
     }
     
-    // Apply view options
-    if (currentFilters.view === 'Popular') {
-      filteredQuestions.sort((a, b) => b.votes - a.votes);
-    } else if (currentFilters.view === 'Unanswered') {
-      filteredQuestions = filteredQuestions.filter(q => q.answers === 0);
-    }
-    
-    // Render questions
-    if (filteredQuestions.length === 0) {
-      questionsList.innerHTML = '<div class="no-questions">No questions found matching your criteria.</div>';
+    // Render tokens
+    if (filteredTokens.length === 0) {
+      tokensList.innerHTML = '<div class="no-tokens">No tokens found matching your criteria.</div>';
       return;
     }
     
-    filteredQuestions.forEach(question => {
-      const questionEl = document.createElement('div');
-      questionEl.className = 'question-card';
-      questionEl.dataset.id = question.id;
+    filteredTokens.forEach(token => {
+      const tokenEl = document.createElement('div');
+      tokenEl.className = 'token-card';
+      tokenEl.dataset.id = token.id;
       
-      questionEl.innerHTML = `
-        <div class="vote-section">
-          <button class="vote-btn downvote" title="Downvote">👎</button>
-          <span class="vote-count">${question.votes}</span>
-          <button class="vote-btn upvote" title="Upvote">👍</button>
+      // Status indicator class
+      const statusClass = token.status === 'in-progress' ? 'in-progress' : token.status;
+      
+      tokenEl.innerHTML = `
+        <div class="token-card-header">
+          <div class="token-title">${token.title}</div>
+          <div class="token-status">
+            <span class="status-indicator ${statusClass}"></span>
+            <span>${token.status.replace('-', ' ')}</span>
+          </div>
         </div>
-        <div class="question-content">
-          <div class="question-header">
-            <h3>${question.title}</h3>
-            <div class="question-meta">
-              <span class="user-info">Asked by ${question.author}</span>
-              <span class="time-info">${question.time}</span>
-            </div>
-          </div>
-          <p class="question-excerpt">${question.excerpt}</p>
-          <div class="question-footer">
-            <div class="tags">
-              ${question.tags.map(tag => `<span class="tag ${tag}">${tag.charAt(0).toUpperCase() + tag.slice(1)}</span>`).join('')}
-            </div>
-            <div class="activity-info">
-              <span><i class="fas fa-comment"></i> ${question.answers} ${question.answers === 1 ? 'answer' : 'answers'}</span>
-              <span><i class="fas fa-eye"></i> ${question.views} views</span>
-              <label class="status-toggle">
-                <input type="checkbox" ${question.status === 'closed' ? 'checked' : ''}>
-                <span class="status-slider"></span>
-                <div class="status-labels">
-                  <span>✕</span>
-                  <span>✓</span>
-                </div>
-              </label>
-            </div>
-          </div>
+        <div class="token-meta">
+          <span><i class="fas fa-user"></i> ${token.author}</span>
+          <span><i class="fas fa-clock"></i> ${token.time}</span>
+          <span><i class="fas fa-tag"></i> ${token.category}</span>
+        </div>
+        <div class="token-excerpt">${token.excerpt}</div>
+        <div class="token-footer">
+          <span><i class="fas fa-comment"></i> ${token.replies.length} ${token.replies.length === 1 ? 'reply' : 'replies'}</span>
         </div>
       `;
       
-      questionsList.appendChild(questionEl);
+      tokensList.appendChild(tokenEl);
     });
+  }
+
+  // Open token detail dialog
+  function openTokenDetail(tokenId) {
+    const token = tokens.find(t => t.id == tokenId);
+    if (!token) return;
+    
+    tokenDetailTitle.textContent = token.title;
+    tokenDetailContent.textContent = token.content;
+    tokenAuthor.textContent = token.author;
+    tokenTime.textContent = token.time;
+    tokenCategory.textContent = token.category;
+    
+    // Set status indicator
+    tokenStatusIndicator.className = 'status-indicator';
+    tokenStatusIndicator.classList.add(token.status === 'in-progress' ? 'in-progress' : token.status);
+    tokenStatusText.textContent = token.status.replace('-', ' ');
+    
+    // Set shareable link
+    tokenShareLink.value = `${window.location.origin}/tickets/${tokenId}`;
+    
+    // Store current token ID in dialog for later use
+    tokenDetailDialog.dataset.tokenId = tokenId;
+    
+    // Show dialog
+    tokenDetailDialog.style.display = 'block';
+    document.body.style.overflow = 'hidden';
   }
 
   // Setup event listeners
@@ -205,14 +245,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update current filters
         if (dropdown === categoryDropdown) {
           currentFilters.category = value;
-        } else if (dropdown === sortDropdown) {
-          currentFilters.sort = value;
         } else if (dropdown === statusDropdown) {
           currentFilters.status = value;
         }
         
-        // Re-render questions
-        renderQuestions();
+        // Re-render tokens
+        renderTokens();
       });
     });
 
@@ -222,159 +260,141 @@ document.addEventListener('DOMContentLoaded', function() {
         viewOptions.forEach(opt => opt.classList.remove('active'));
         this.classList.add('active');
         currentFilters.view = this.textContent;
-        renderQuestions();
+        renderTokens();
       });
     });
 
     // Search functionality
     searchBox.addEventListener('input', function() {
       currentFilters.search = this.value;
-      renderQuestions();
+      renderTokens();
     });
 
-    // Open dialog when Ask Question button is clicked
-    askQuestionBtn.addEventListener('click', function() {
-      askDialog.style.display = 'block';
+    // Open create token dialog
+    createTokenBtn.addEventListener('click', function() {
+      createTokenDialog.style.display = 'block';
       document.body.style.overflow = 'hidden';
     });
 
-    // Close dialog
-    closeDialog.addEventListener('click', function() {
-      askDialog.style.display = 'none';
+    // Close create token dialog
+    closeTokenDialog.addEventListener('click', function() {
+      createTokenDialog.style.display = 'none';
       document.body.style.overflow = 'auto';
     });
 
-    // Close when clicking outside dialog
-    askDialog.addEventListener('click', function(e) {
-      if (e.target === askDialog) {
-        askDialog.style.display = 'none';
+    // Close dialogs when clicking outside
+    document.addEventListener('click', function(e) {
+      if (e.target === createTokenDialog) {
+        createTokenDialog.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+      if (e.target === tokenDetailDialog) {
+        tokenDetailDialog.style.display = 'none';
         document.body.style.overflow = 'auto';
       }
     });
 
-    // Tag functionality for dialog
-    const dialogTags = [];
-    dialogTagInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && this.value.trim()) {
-        e.preventDefault();
-        const tag = this.value.trim().toLowerCase().replace(' ', '-');
-        if (!dialogTags.includes(tag)) {
-          dialogTags.push(tag);
-          renderDialogTags();
-        }
-        this.value = '';
-      }
-    });
-
-    function renderDialogTags() {
-      dialogTagsContainer.innerHTML = '';
-      dialogTags.forEach(tag => {
-        const tagEl = document.createElement('div');
-        tagEl.className = 'tag-input-tag';
-        tagEl.innerHTML = `
-          ${tag}
-          <span class="remove-tag" data-tag="${tag}">&times;</span>
-        `;
-        dialogTagsContainer.appendChild(tagEl);
-      });
-      
-      // Add event listeners to remove buttons
-      document.querySelectorAll('#dialogTagsContainer .remove-tag').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const tagToRemove = this.dataset.tag;
-          const index = dialogTags.indexOf(tagToRemove);
-          if (index > -1) {
-            dialogTags.splice(index, 1);
-            renderDialogTags();
-          }
-        });
-      });
-    }
-
-    // Dialog form submission
-    dialogQuestionForm.addEventListener('submit', function(e) {
+    // Token form submission
+    tokenForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      const title = document.getElementById('dialogQuestionTitle').value;
-      const details = document.getElementById('dialogQuestionDetails').value;
+      const title = document.getElementById('tokenTitle').value;
+      const details = document.getElementById('tokenDetails').value;
+      const category = document.getElementById('tokenCategory').value;
       
-      // Create new question
-      const newQuestion = {
-        id: questions.length + 1,
+      // Create new token
+      const newToken = {
+        id: tokens.length + 1,
         title: title,
         excerpt: details.length > 100 ? details.substring(0, 100) + '...' : details,
-        votes: 0,
         status: "open",
-        tags: [...dialogTags],
-        answers: 0,
-        views: 0,
+        category: category,
         author: "You",
-        time: "Just now"
+        time: "Just now",
+        content: details,
+        replies: []
       };
       
-      questions.unshift(newQuestion);
+      tokens.unshift(newToken);
       
       // Reset form and close dialog
       this.reset();
-      dialogTags.length = 0;
-      renderDialogTags();
-      askDialog.style.display = 'none';
+      createTokenDialog.style.display = 'none';
       document.body.style.overflow = 'auto';
       
-      // Refresh questions list
-      renderQuestions();
+      // Refresh tokens list
+      renderTokens();
     });
 
-    // Voting and status toggle functionality
-    questionsList.addEventListener('click', function(e) {
-      const upvoteBtn = e.target.closest('.upvote');
-      const downvoteBtn = e.target.closest('.downvote');
-      const statusToggle = e.target.closest('.status-toggle input');
-      const questionCard = e.target.closest('.question-card');
+    // Token card click
+    tokensList.addEventListener('click', function(e) {
+      const tokenCard = e.target.closest('.token-card');
+      if (tokenCard) {
+        openTokenDetail(tokenCard.dataset.id);
+      }
+    });
+
+    // Close token detail dialog
+    closeTokenDetail.addEventListener('click', function() {
+      tokenDetailDialog.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+
+    // Copy share link
+    copyLinkBtn.addEventListener('click', function() {
+      tokenShareLink.select();
+      document.execCommand('copy');
       
-      if (upvoteBtn || downvoteBtn) {
-        const isUpvote = !!upvoteBtn;
-        const voteBtn = isUpvote ? upvoteBtn : downvoteBtn;
-        const voteCount = voteBtn.parentElement.querySelector('.vote-count');
-        let count = parseInt(voteCount.textContent);
-        
-        if (voteBtn.classList.contains('active')) {
-          // Remove vote
-          count += isUpvote ? -1 : 1;
-          voteBtn.classList.remove('active');
-        } else {
-          // Add vote
-          const oppositeBtn = isUpvote 
-            ? voteBtn.parentElement.querySelector('.downvote')
-            : voteBtn.parentElement.querySelector('.upvote');
-          
-          if (oppositeBtn.classList.contains('active')) {
-            count += isUpvote ? 2 : -2;
-            oppositeBtn.classList.remove('active');
-          } else {
-            count += isUpvote ? 1 : -1;
-          }
-          voteBtn.classList.add('active');
-        }
-        
-        voteCount.textContent = count;
-        
-        // Update in-memory data
-        const questionId = parseInt(questionCard.dataset.id);
-        const question = questions.find(q => q.id === questionId);
-        if (question) question.votes = count;
-      } 
-      else if (statusToggle) {
-        // Toggle question status
-        const questionId = parseInt(questionCard.dataset.id);
-        const question = questions.find(q => q.id === questionId);
-        if (question) {
-          question.status = statusToggle.checked ? 'closed' : 'open';
-        }
+      // Show copied feedback
+      const originalText = this.innerHTML;
+      this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(() => {
+        this.innerHTML = originalText;
+      }, 2000);
+    });
+
+    // Admin reply submission
+    submitReplyBtn.addEventListener('click', function() {
+      const replyContent = agentReply.value.trim();
+      if (!replyContent) return;
+      
+      const tokenId = tokenDetailDialog.dataset.tokenId;
+      const token = tokens.find(t => t.id == tokenId);
+      if (!token) return;
+      
+      // Add reply
+      token.replies.push({
+        author: "Support Agent",
+        time: "Just now",
+        content: replyContent
+      });
+      
+      // If status was open, change to in-progress
+      if (token.status === 'open') {
+        token.status = 'in-progress';
+        tokenStatusIndicator.className = 'status-indicator in-progress';
+        tokenStatusText.textContent = 'in progress';
       }
-      else if (questionCard) {
-        // Navigate to question detail
-        console.log('Navigating to question:', questionCard.dataset.id);
-      }
+      
+      // Clear reply field
+      agentReply.value = '';
+      
+      // Refresh tokens list and keep dialog open
+      renderTokens();
+    });
+
+    // Resolve token
+    resolveTokenBtn.addEventListener('click', function() {
+      const tokenId = tokenDetailDialog.dataset.tokenId;
+      const token = tokens.find(t => t.id == tokenId);
+      if (!token) return;
+      
+      // Change status to resolved
+      token.status = 'resolved';
+      tokenStatusIndicator.className = 'status-indicator resolved';
+      tokenStatusText.textContent = 'resolved';
+      
+      // Refresh tokens list and keep dialog open
+      renderTokens();
     });
   }
 

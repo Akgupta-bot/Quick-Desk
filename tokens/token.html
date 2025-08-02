@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickDesk - Q&A Dashboard</title>
+  <title>QuickDesk - Token Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="tokens.css">
 </head>
@@ -34,7 +34,7 @@
       <div class="nav-filter">
         <div class="search-box">
           <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search questions...">
+          <input type="text" placeholder="Search tokens...">
         </div>
         
         <div class="dropdown">
@@ -44,27 +44,16 @@
             <a href="#">Technical Support</a>
             <a href="#">Billing</a>
             <a href="#">General Inquiry</a>
-            <a href="#">Feature Request</a>
-          </div>
-        </div>
-        
-        <div class="dropdown">
-          <button class="dropdown-btn">Sort By <i class="fas fa-chevron-down"></i></button>
-          <div class="dropdown-content">
-            <a href="#">Most Recent</a>
-            <a href="#">Most Votes</a>
-            <a href="#">Most Active</a>
-            <a href="#">Unanswered</a>
           </div>
         </div>
         
         <div class="dropdown">
           <button class="dropdown-btn">Status <i class="fas fa-chevron-down"></i></button>
           <div class="dropdown-content">
-            <a href="#">All Questions</a>
+            <a href="#">All Statuses</a>
             <a href="#">Open</a>
-            <a href="#">Closed</a>
-            <a href="#">My Questions</a>
+            <a href="#">In Progress</a>
+            <a href="#">Resolved</a>
           </div>
         </div>
       </div>
@@ -77,8 +66,8 @@
       <div class="quick-actions">
         <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
         <div class="action-buttons">
-          <button class="btn btn-primary" id="askQuestionBtn">
-            <i class="fas fa-plus"></i> Ask New Question
+          <button class="btn btn-primary" id="createTokenBtn">
+            <i class="fas fa-plus"></i> Ask Question
           </button>
           <button class="btn btn-outline">
             <i class="fas fa-search"></i> Search Knowledge Base
@@ -86,31 +75,31 @@
         </div>
       </div>
 
-      <!-- Questions Section -->
-      <div class="questions-section">
+      <!-- Token List Section -->
+      <div class="tokens-section">
         <div class="section-header">
-          <h2><i class="fas fa-question-circle"></i> Recent Questions</h2>
+          <h2><i class="fas fa-ticket-alt"></i> Recent Tokens</h2>
           <div class="view-options">
             <span class="active">Recent</span>
-            <span>Popular</span>
-            <span>Unanswered</span>
+            <span>Priority</span>
+            <span>Unassigned</span>
           </div>
         </div>
         
-        <div class="questions-list" id="questionsList">
-          <!-- Questions will be loaded here dynamically -->
+        <div class="tokens-list" id="tokensList">
+          <!-- Tokens will be loaded here dynamically -->
         </div>
       </div>
     </div>
   </main>
 
-  <!-- Ask Question Dialog -->
-  <div class="dialog-overlay" id="askDialog">
+  <!-- Create Token Dialog -->
+  <div class="dialog-overlay" id="createTokenDialog">
     <div class="dialog-container">
       <!-- Dialog Navbar -->
       <nav class="dialog-nav">
         <div class="dialog-nav-left">
-          <span class="dialog-close" id="closeDialog">&times;</span>
+          <span class="dialog-close" id="closeTokenDialog">&times;</span>
         </div>
         <div class="dialog-nav-right">
           <div class="nav-icon">
@@ -123,25 +112,87 @@
 
       <!-- Dialog Content -->
       <div class="dialog-content">
-        <h2>Ask a Question</h2>
-        <form id="dialogQuestionForm">
+        <h2>Create New Token</h2>
+        <form id="tokenForm">
           <div class="form-group">
-            <label for="dialogQuestionTitle">Question</label>
-            <input type="text" id="dialogQuestionTitle" placeholder="What's your question?" required>
+            <label for="tokenTitle">Subject</label>
+            <input type="text" id="tokenTitle" placeholder="What's the issue about?" required>
           </div>
           <div class="form-group">
-            <label for="dialogQuestionDetails">Description</label>
-            <textarea id="dialogQuestionDetails" rows="5" placeholder="Provide detailed information about your question..." required></textarea>
+            <label for="tokenDetails">Description</label>
+            <textarea id="tokenDetails" rows="5" placeholder="Describe your issue in detail..." required></textarea>
           </div>
           <div class="form-group">
-            <label for="dialogQuestionTags">Tags</label>
-            <div class="tags-input">
-              <input type="text" id="dialogTagInput" placeholder="Add tags (press Enter to add)">
-              <div class="tags-container" id="dialogTagsContainer"></div>
-            </div>
+            <label for="tokenCategory">Category</label>
+            <select id="tokenCategory" required>
+              <option value="">Select a category</option>
+              <option value="technical">Technical Support</option>
+              <option value="billing">Billing</option>
+              <option value="general">General Inquiry</option>
+            </select>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">Post Question</button>
+          <button type="submit" class="btn btn-primary btn-block">Create Token</button>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Token Detail Dialog -->
+  <div class="dialog-overlay" id="tokenDetailDialog">
+    <div class="dialog-container">
+      <!-- Dialog Navbar -->
+      <nav class="dialog-nav">
+        <div class="dialog-nav-left">
+          <span class="dialog-close" id="closeTokenDetail">&times;</span>
+        </div>
+        <div class="dialog-nav-right">
+          <div class="nav-icon">
+            <i class="fas fa-bell"></i>
+            <span class="badge">3</span>
+          </div>
+          <a href="#" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+        </div>
+      </nav>
+
+      <!-- Dialog Content -->
+      <div class="dialog-content">
+        <div class="token-header">
+          <h2 id="tokenDetailTitle">Loading token...</h2>
+          <div class="token-status">
+            <span class="status-indicator" id="tokenStatusIndicator"></span>
+            <span id="tokenStatusText">Status</span>
+          </div>
+        </div>
+        
+        <div class="token-meta">
+          <span><i class="fas fa-user"></i> <span id="tokenAuthor">Author</span></span>
+          <span><i class="fas fa-clock"></i> <span id="tokenTime">Time</span></span>
+          <span><i class="fas fa-tag"></i> <span id="tokenCategory">Category</span></span>
+        </div>
+        
+        <div class="token-content" id="tokenDetailContent">
+          Loading content...
+        </div>
+        
+        <div class="share-section">
+          <label>Shareable Link:</label>
+          <div class="share-input">
+            <input type="text" id="tokenShareLink" readonly>
+            <button class="btn btn-outline" id="copyLinkBtn">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+          </div>
+        </div>
+        
+        <!-- Only visible to admin/support -->
+        <div class="admin-section" id="adminSection">
+          <h3><i class="fas fa-reply"></i> Agent Reply</h3>
+          <textarea id="agentReply" placeholder="Enter your response..." rows="3"></textarea>
+          <div class="admin-actions">
+            <button class="btn btn-primary" id="submitReplyBtn">Submit Reply</button>
+            <button class="btn btn-outline" id="resolveTokenBtn">Mark as Resolved</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
