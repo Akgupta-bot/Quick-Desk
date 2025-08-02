@@ -1,5 +1,3 @@
-// models/ticketModel.js
-
 const mongoose = require('mongoose');
 
 const ticketSchema = new mongoose.Schema({
@@ -54,7 +52,6 @@ const ticketSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-// Virtual populate to get comments on a ticket
 ticketSchema.virtual('comments', {
     ref: 'Comment',
     foreignField: 'ticket',

@@ -1,5 +1,3 @@
-// models/commentModel.js
-
 const mongoose = require('mongoose');
 const Ticket = require('./ticketModel');
 
@@ -32,7 +30,6 @@ commentSchema.post('save', async function () {
     await Ticket.findByIdAndUpdate(this.ticket, { updatedAt: Date.now() });
 });
 
-// Populate user details on find
 commentSchema.pre(/^find/, function (next) {
     this.populate({
         path: 'user',
