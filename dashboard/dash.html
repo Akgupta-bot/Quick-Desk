@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickDesk - Dashboard</title>
+  <link rel="stylesheet" href="dash.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <nav class="top-nav">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="#" class="nav-logo">QuickDesk</a>
+      </div>
+      <div class="nav-right">
+        <div class="nav-icon">
+          <i class="fas fa-bell"></i>
+          <span class="badge">3</span>
+        </div>
+        <a href="../login/login.html" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <div class="user-menu">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-avatar">
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="dashboard-container">
+      <!-- Dashboard Header -->
+      <div class="dashboard-header">
+        <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+        <div class="date-filter">
+          <select id="time-period">
+            <option value="7">Last 7 Days</option>
+            <option value="30" selected>Last 30 Days</option>
+            <option value="90">Last 90 Days</option>
+            <option value="365">Last Year</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background-color: rgba(67, 97, 238, 0.1); color: #4361ee;">
+            <i class="fas fa-ticket-alt"></i>
+          </div>
+          <div class="stat-info">
+            <h3>Total Tickets</h3>
+            <span class="stat-value">142</span>
+            <span class="stat-change positive"><i class="fas fa-arrow-up"></i> 12% from last period</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background-color: rgba(248, 150, 30, 0.1); color: #f8961e;">
+            <i class="fas fa-spinner"></i>
+          </div>
+          <div class="stat-info">
+            <h3>In Progress</h3>
+            <span class="stat-value">24</span>
+            <span class="stat-change negative"><i class="fas fa-arrow-down"></i> 5% from last period</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background-color: rgba(76, 201, 240, 0.1); color: #4cc9f0;">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-info">
+            <h3>Resolved</h3>
+            <span class="stat-value">98</span>
+            <span class="stat-change positive"><i class="fas fa-arrow-up"></i> 18% from last period</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon" style="background-color: rgba(239, 35, 60, 0.1); color: #ef233c;">
+            <i class="fas fa-exclamation-circle"></i>
+          </div>
+          <div class="stat-info">
+            <h3>High Priority</h3>
+            <span class="stat-value">15</span>
+            <span class="stat-change neutral">No change</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-line"></i> Tickets Over Time</h3>
+            <div class="chart-legend">
+              <span><i class="fas fa-square" style="color: #4361ee;"></i> Created</span>
+              <span><i class="fas fa-square" style="color: #4cc9f0;"></i> Resolved</span>
+            </div>
+          </div>
+          <canvas id="ticketsOverTimeChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-pie"></i> Tickets by Category</h3>
+          </div>
+          <canvas id="ticketsByCategoryChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-bar"></i> Resolution Time</h3>
+            <div class="chart-legend">
+              <span><i class="fas fa-square" style="color: #f72585;"></i> Average</span>
+            </div>
+          </div>
+          <canvas id="resolutionTimeChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3><i class="fas fa-users"></i> Agent Performance</h3>
+            <div class="chart-legend">
+              <span><i class="fas fa-square" style="color: #3a0ca3;"></i> Tickets Closed</span>
+            </div>
+          </div>
+          <canvas id="agentPerformanceChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="activity-section">
+        <h2><i class="fas fa-history"></i> Recent Activity</h2>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="fas fa-ticket-alt"></i>
+            </div>
+            <div class="activity-content">
+              <p><strong>John Doe</strong> created a new ticket <strong>#TKT-142</strong> in <strong>Technical Support</strong></p>
+              <span class="activity-time">10 minutes ago</span>
+            </div>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="activity-content">
+              <p><strong>Sarah Smith</strong> resolved ticket <strong>#TKT-138</strong></p>
+              <span class="activity-time">1 hour ago</span>
+            </div>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="fas fa-comment"></i>
+            </div>
+            <div class="activity-content">
+              <p><strong>Mike Johnson</strong> replied to ticket <strong>#TKT-135</strong></p>
+              <span class="activity-time">3 hours ago</span>
+            </div>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="activity-content">
+              <p><strong>Ticket #TKT-129</strong> was escalated to <strong>High Priority</strong></p>
+              <span class="activity-time">Yesterday</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="dash.js"></script>
+</body>
+</html>
