@@ -42,11 +42,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // DOM Elements
   const questionsList = document.getElementById('questionsList');
   const askQuestionBtn = document.getElementById('askQuestionBtn');
-  const askQuestionModal = document.getElementById('askQuestionModal');
-  const closeModal = document.querySelector('.close-modal');
-  const questionForm = document.getElementById('questionForm');
-  const tagInput = document.getElementById('tagInput');
-  const tagsContainer = document.getElementById('tagsContainer');
+  const askDialog = document.getElementById('askDialog');
+  const closeDialog = document.getElementById('closeDialog');
+  const dialogQuestionForm = document.getElementById('dialogQuestionForm');
+  const dialogTagInput = document.getElementById('dialogTagInput');
+  const dialogTagsContainer = document.getElementById('dialogTagsContainer');
   const searchBox = document.querySelector('.search-box input');
   const categoryDropdown = document.querySelectorAll('.dropdown')[0];
   const sortDropdown = document.querySelectorAll('.dropdown')[1];
@@ -232,66 +232,70 @@ document.addEventListener('DOMContentLoaded', function() {
       renderQuestions();
     });
 
-    // Ask question modal
+    // Open dialog when Ask Question button is clicked
     askQuestionBtn.addEventListener('click', function() {
-      askQuestionModal.style.display = 'block';
+      askDialog.style.display = 'block';
+      document.body.style.overflow = 'hidden';
     });
 
-    closeModal.addEventListener('click', function() {
-      askQuestionModal.style.display = 'none';
+    // Close dialog
+    closeDialog.addEventListener('click', function() {
+      askDialog.style.display = 'none';
+      document.body.style.overflow = 'auto';
     });
 
-    window.addEventListener('click', function(e) {
-      if (e.target === askQuestionModal) {
-        askQuestionModal.style.display = 'none';
+    // Close when clicking outside dialog
+    askDialog.addEventListener('click', function(e) {
+      if (e.target === askDialog) {
+        askDialog.style.display = 'none';
+        document.body.style.overflow = 'auto';
       }
     });
 
-    // Tag input functionality
-    const tags = [];
-    
-    tagInput.addEventListener('keydown', function(e) {
+    // Tag functionality for dialog
+    const dialogTags = [];
+    dialogTagInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && this.value.trim()) {
         e.preventDefault();
         const tag = this.value.trim().toLowerCase().replace(' ', '-');
-        if (!tags.includes(tag)) {
-          tags.push(tag);
-          renderTags();
+        if (!dialogTags.includes(tag)) {
+          dialogTags.push(tag);
+          renderDialogTags();
         }
         this.value = '';
       }
     });
-    
-    function renderTags() {
-      tagsContainer.innerHTML = '';
-      tags.forEach(tag => {
+
+    function renderDialogTags() {
+      dialogTagsContainer.innerHTML = '';
+      dialogTags.forEach(tag => {
         const tagEl = document.createElement('div');
         tagEl.className = 'tag-input-tag';
         tagEl.innerHTML = `
           ${tag}
           <span class="remove-tag" data-tag="${tag}">&times;</span>
         `;
-        tagsContainer.appendChild(tagEl);
+        dialogTagsContainer.appendChild(tagEl);
       });
       
       // Add event listeners to remove buttons
-      document.querySelectorAll('.remove-tag').forEach(btn => {
+      document.querySelectorAll('#dialogTagsContainer .remove-tag').forEach(btn => {
         btn.addEventListener('click', function() {
           const tagToRemove = this.dataset.tag;
-          const index = tags.indexOf(tagToRemove);
+          const index = dialogTags.indexOf(tagToRemove);
           if (index > -1) {
-            tags.splice(index, 1);
-            renderTags();
+            dialogTags.splice(index, 1);
+            renderDialogTags();
           }
         });
       });
     }
 
-    // Question form submission
-    questionForm.addEventListener('submit', function(e) {
+    // Dialog form submission
+    dialogQuestionForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      const title = document.getElementById('questionTitle').value;
-      const details = document.getElementById('questionDetails').value;
+      const title = document.getElementById('dialogQuestionTitle').value;
+      const details = document.getElementById('dialogQuestionDetails').value;
       
       // Create new question
       const newQuestion = {
@@ -300,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
         excerpt: details.length > 100 ? details.substring(0, 100) + '...' : details,
         votes: 0,
         status: "open",
-        tags: [...tags],
+        tags: [...dialogTags],
         answers: 0,
         views: 0,
         author: "You",
@@ -309,13 +313,14 @@ document.addEventListener('DOMContentLoaded', function() {
       
       questions.unshift(newQuestion);
       
-      // Reset form
+      // Reset form and close dialog
       this.reset();
-      tags.length = 0;
-      renderTags();
+      dialogTags.length = 0;
+      renderDialogTags();
+      askDialog.style.display = 'none';
+      document.body.style.overflow = 'auto';
       
-      // Close modal and refresh questions
-      askQuestionModal.style.display = 'none';
+      // Refresh questions list
       renderQuestions();
     });
 

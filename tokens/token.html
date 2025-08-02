@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QuickDesk - Q&A Dashboard</title>
-  <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="tokens.css">
 </head>
 <body>
   <!-- Top Navigation Bar -->
@@ -22,7 +22,7 @@
         <a href="#" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
         <a href="#" class="nav-link"><i class="fas fa-user-shield"></i> Admin</a>
         <div class="user-menu">
-          <a href="../profile/profile.html"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-avatar"></a>
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="user-avatar">
         </div>
       </div>
     </div>
@@ -104,29 +104,45 @@
     </div>
   </main>
 
-  <!-- Ask Question Modal -->
-  <div class="modal" id="askQuestionModal">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h2>Ask a New Question</h2>
-      <form id="questionForm">
-        <div class="form-group">
-          <label for="questionTitle">Title</label>
-          <input type="text" id="questionTitle" placeholder="What's your question?" required>
+  <!-- Ask Question Dialog -->
+  <div class="dialog-overlay" id="askDialog">
+    <div class="dialog-container">
+      <!-- Dialog Navbar -->
+      <nav class="dialog-nav">
+        <div class="dialog-nav-left">
+          <span class="dialog-close" id="closeDialog">&times;</span>
         </div>
-        <div class="form-group">
-          <label for="questionDetails">Details</label>
-          <textarea id="questionDetails" rows="5" placeholder="Provide more details..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>Tags</label>
-          <div class="tags-input">
-            <input type="text" id="tagInput" placeholder="Add tags...">
-            <div class="tags-container" id="tagsContainer"></div>
+        <div class="dialog-nav-right">
+          <div class="nav-icon">
+            <i class="fas fa-bell"></i>
+            <span class="badge">3</span>
           </div>
+          <a href="#" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
         </div>
-        <button type="submit" class="btn btn-primary">Submit Question</button>
-      </form>
+      </nav>
+
+      <!-- Dialog Content -->
+      <div class="dialog-content">
+        <h2>Ask a Question</h2>
+        <form id="dialogQuestionForm">
+          <div class="form-group">
+            <label for="dialogQuestionTitle">Question</label>
+            <input type="text" id="dialogQuestionTitle" placeholder="What's your question?" required>
+          </div>
+          <div class="form-group">
+            <label for="dialogQuestionDetails">Description</label>
+            <textarea id="dialogQuestionDetails" rows="5" placeholder="Provide detailed information about your question..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="dialogQuestionTags">Tags</label>
+            <div class="tags-input">
+              <input type="text" id="dialogTagInput" placeholder="Add tags (press Enter to add)">
+              <div class="tags-container" id="dialogTagsContainer"></div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Post Question</button>
+        </form>
+      </div>
     </div>
   </div>
 

@@ -518,48 +518,77 @@ input:checked + .status-slider:before {
   font-weight: bold;
 }
 
-/* Modal */
-.modal {
+/* Dialog Styles */
+.dialog-overlay {
   display: none;
   position: fixed;
-  z-index: 1001;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  overflow: auto;
+  z-index: 1002;
+  overflow-y: auto;
 }
 
-.modal-content {
-  background-color: var(--white);
-  margin: 5% auto;
-  padding: 2rem;
+.dialog-container {
+  background-color: white;
+  margin: 2rem auto;
+  max-width: 700px;
   border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 }
 
-.close-modal {
-  position: absolute;
-  right: 1.5rem;
-  top: 1.5rem;
+.dialog-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--primary);
+  color: white;
+}
+
+.dialog-nav-left, .dialog-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dialog-close {
   font-size: 1.5rem;
-  color: var(--gray);
   cursor: pointer;
+  color: white;
+  padding: 0.5rem;
 }
 
-.close-modal:hover {
-  color: var(--dark);
+.dialog-nav .nav-icon {
+  color: white;
 }
 
-.modal h2 {
+.dialog-nav .nav-link {
+  color: white;
+}
+
+.dialog-nav .nav-link:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dialog-content {
+  padding: 2rem;
+}
+
+.dialog-content h2 {
   margin-bottom: 1.5rem;
   color: var(--primary-dark);
 }
 
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+/* Form Group Styles */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -568,6 +597,7 @@ input:checked + .status-slider:before {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
+  color: var(--dark);
 }
 
 .form-group input,
@@ -577,12 +607,21 @@ input:checked + .status-slider:before {
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
 }
 
 .form-group textarea {
   resize: vertical;
+  min-height: 120px;
 }
 
+/* Tag Input Styles */
 .tags-input {
   position: relative;
 }
@@ -597,10 +636,10 @@ input:checked + .status-slider:before {
 .tag-input-tag {
   background: rgba(67, 97, 238, 0.1);
   color: var(--primary);
-  padding: 0.3rem 0.6rem;
+  padding: 0.3rem 0.8rem;
   border-radius: 4px;
   font-size: 0.8rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.3rem;
 }
@@ -608,6 +647,7 @@ input:checked + .status-slider:before {
 .tag-input-tag .remove-tag {
   cursor: pointer;
   font-size: 0.7rem;
+  margin-left: 0.3rem;
 }
 
 /* Responsive Design */
@@ -646,6 +686,16 @@ input:checked + .status-slider:before {
   .btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .dialog-container {
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+  }
+  
+  .dialog-content {
+    padding: 1.5rem;
   }
 }
 
