@@ -1,11 +1,12 @@
-const express = require("express");
-
-const authController = require("./../controllers/authController");
+const express = require('express');
+const userController = require('../controllers/userController');
 
 const router = express.Router();
 
-router.post("/signup", authController.signup);
-router.post("/login", authController.login);
-router.get("/logout", authController.logout);
+router.post('/register', userController.register);
+router.post('/login', userController.login);
+
+// Admin only
+router.get('/', userController.protect, userController.restrictTo('Admin'), userController.getAllUsers);
 
 module.exports = router;
