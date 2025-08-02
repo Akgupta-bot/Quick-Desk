@@ -29,18 +29,13 @@ exports.processTicketAttachments = (req, res, next) => {
 
     req.body.attachments = [];
     req.files.forEach(file => {
-        // In a real app, you would upload this to a cloud service (S3, etc.)
-        // and save the URL. For now, we'll just save a placeholder name.
         const filename = `ticket-${req.user.id}-${Date.now()}-${file.originalname}`;
         req.body.attachments.push(filename);
-        // Add logic here to save the file buffer (file.buffer) to disk or cloud.
     });
 
     next();
 };
 
-
-// --- Route Handlers ---
 
 exports.createTicket = async (req, res) => {
     try {
@@ -52,7 +47,6 @@ exports.createTicket = async (req, res) => {
             createdBy: req.user.id
         });
 
-        // Example of sending an email notification
         // await sendEmail({
         //     email: req.user.email,
         //     subject: `[Ticket ID: ${newTicket._id}] Your ticket has been created`,
@@ -73,7 +67,6 @@ exports.createTicket = async (req, res) => {
 exports.getAllTickets = async (req, res) => {
     try {
         let filter = {};
-        // EndUsers can only see their own tickets
         if (req.user.role === 'EndUser') {
             filter = { createdBy: req.user.id };
         }
@@ -101,7 +94,7 @@ exports.getAllTickets = async (req, res) => {
 exports.getTicket = async (req, res) => {
     try {
         const ticket = await Ticket.findById(req.params.id)
-            .populate('comments') // Populate comments via virtual populate
+            .populate('comments')
             .populate('category createdBy assignedTo');
 
         if (!ticket) {
@@ -206,11 +199,11 @@ exports.voteOnTicket = async (req, res) => {
             return res.status(404).json({ message: 'No ticket found with that ID' });
         }
 
-        const { voteType } = req.body; // 'upvote' or 'downvote'
+        const { voteType } = req.body;
         const userId = req.user.id;
 
         if (voteType === 'upvote') {
-            ticket.upvotes.addToSet(userId); // Use addToSet to prevent duplicates
+            ticket.upvotes.addToSet(userId);
             ticket.downvotes.pull(userId);
         } else if (voteType === 'downvote') {
             ticket.downvotes.addToSet(userId);
