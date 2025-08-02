@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Initialize the active tab
   switchAuthTab('login');
 
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Password strength indicator
   const registerPassword = document.getElementById('register-password');
   if (registerPassword) {
-    registerPassword.addEventListener('input', function() {
+    registerPassword.addEventListener('input', function () {
       updatePasswordStrength(this.value);
     });
   }
@@ -23,11 +23,11 @@ function switchAuthTab(tab) {
   // Update tabs
   document.getElementById('login-tab').classList.toggle('active', tab === 'login');
   document.getElementById('register-tab').classList.toggle('active', tab === 'register');
-  
+
   // Update forms
   document.getElementById('login-form').classList.toggle('active', tab === 'login');
   document.getElementById('register-form').classList.toggle('active', tab === 'register');
-  
+
   // Update switch prompt
   const prompt = document.getElementById('switch-prompt');
   const link = document.getElementById('switch-link');
@@ -45,7 +45,7 @@ function switchAuthTab(tab) {
 function setupPasswordToggle(inputId, toggleId) {
   const toggle = document.getElementById(toggleId);
   if (toggle) {
-    toggle.addEventListener('click', function() {
+    toggle.addEventListener('click', function () {
       const input = document.getElementById(inputId);
       if (input.type === 'password') {
         input.type = 'text';
@@ -64,7 +64,7 @@ function updatePasswordStrength(password) {
   const strengthBar = document.querySelector('.strength-bar');
   const strengthStatus = document.getElementById('strength-status');
   const strength = calculatePasswordStrength(password);
-  
+
   strengthBar.style.width = strength.percentage + '%';
   strengthBar.style.backgroundColor = strength.color;
   strengthStatus.textContent = strength.text;
@@ -96,30 +96,67 @@ function calculatePasswordStrength(password) {
   }
 }
 
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
-  // Add your login logic here
-  console.log('Login submitted');
-  // alert('Login successful! Redirecting...');
-  // window.location.href = 'profile.html';
+
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+
+  try {
+    const response = await fetch('http://127.0.0.1:5000/api/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // Required to send/receive cookies
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Login failed');
+    }
+
+    alert('Login successful! Redirecting...');
+    window.location.href = '../tokens/token.html';
+  } catch (error) {
+    alert(`Login Error: ${error.message}`);
+  }
 }
 
-function handleRegister(e) {
+async function handleRegister(e) {
   e.preventDefault();
-  
+
   // Validate passwords match
+  const name = document.getElementById('register-name').value;
+  const email = document.getElementById('register-email').value;
   const password = document.getElementById('register-password').value;
-  const confirmPassword = document.getElementById('confirm-password').value;
-  
-  if (password !== confirmPassword) {
-    alert('Passwords do not match!');
-    return;
-  }
-  
+
   // In a real app, you would send the data to your backend
-  console.log('Registration submitted');
-  alert('Account created successfully! Redirecting to login...');
-  switchAuthTab('login');
+  try {
+    const response = await fetch('http://127.0.0.1:5000/api/users/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // Required to send/receive cookies
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Registration failed');
+    }
+
+    console.log(data)
+
+    alert('Account created successfully! Redirecting to login...');
+    switchAuthTab('login');
+  } catch (error) {
+    alert(`Registration Error: ${error.message}`);
+  }
 }
 
 function openPasswordDialog() {
