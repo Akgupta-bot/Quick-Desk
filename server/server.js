@@ -1,37 +1,41 @@
-const mongoose = require("mongoose");
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
-const dotenv = require("dotenv");
+const userRoutes = require('./routes/userRoutes');
+const ticketRoutes = require('./routes/ticketRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 
-process.on("uncaughtException", (err) => {
-    console.log(err.name, err.message);
-    console.log("UNHANDLED EXCEPTION! Shutting down...");
+const app = express();
 
-    process.exit(1);
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Database connection
+mongoose.connect(process.env.DB_URL)
+    .then(() => console.log('MongoDB connected successfully.'))
+    .catch(err => console.error('MongoDB connection error:', err));
+
+
+// API Routes
+app.get('/api', (req, res) => {
+    res.json({ message: 'Welcome to the QuickDesk Help Desk API!' });
 });
 
-dotenv.config({ path: "./.env" });
+app.use('/api/users', userRoutes);
+app.use('/api/tickets', ticketRoutes);
+app.use('/api/categories', categoryRoutes);
 
-const DB = process.env.DB_URL;
 
-mongoose
-    .connect(DB)
-    .then(() => {
-        console.log("DB connection successful!");
-    });
-
-const app = require("./app");
-
-const port = process.env.PORT || 3000;
-
-const server = app.listen(port, () => {
-    console.log(`App running on PORT ${port}`);
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
 });
 
-process.on("unhandledRejection", (err) => {
-    console.log(err.name, err.message);
-    console.log("UNHANDLED REJECTION! Shutting down...");
-
-    server.close(() => {
-        process.exit(1);
-    });
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
