@@ -9,7 +9,12 @@ const categoryRoutes = require('./routes/categoryRoutes');
 
 const app = express();
 
-app.use(cors());
+const allowedOrigin = 'http://127.0.0.1:5500';
+
+app.use(cors({
+    origin: allowedOrigin,
+    credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
