@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickDesk - User Profile</title>
+  <link rel="stylesheet" href="profile.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">QuickDesk</a>
+      <div>
+        <a href="profile.html" class="nav-link active">Profile</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="profile-container">
+    <div class="profile-sidebar">
+      <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="profile-pic">
+      <h2 class="profile-name">John Doe</h2>
+      <div class="profile-role" id="user-role">End User</div>
+      
+      <div class="profile-menu">
+        <a href="#" class="active"><i class="fas fa-user"></i> Profile</a>
+        <a href="#"><i class="fas fa-ticket-alt"></i> My Tickets</a>
+        <a href="#" id="upgrade-account" class="upgrade-option"><i class="fas fa-arrow-up"></i> Request Admin Access</a>
+        <a href="index.html"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+
+    <div class="profile-content">
+      <div class="profile-header">
+        <h2 class="profile-title">My Profile</h2>
+        <button class="btn btn-outline" id="edit-profile-btn"><i class="fas fa-edit"></i> Edit</button>
+      </div>
+
+      <div class="profile-section">
+        <h3><i class="fas fa-id-card"></i> Personal Information</h3>
+        <div class="profile-info">
+          <div class="info-group">
+            <label>Full Name</label>
+            <span id="user-name">John Doe</span>
+          </div>
+          <div class="info-group">
+            <label>Email</label>
+            <span id="user-email">john.doe@company.com</span>
+          </div>
+          <div class="info-group">
+            <label>Phone</label>
+            <span id="user-phone">(123) 456-7890</span>
+          </div>
+          <div class="info-group">
+            <label>Category of Interest</label>
+            <span id="category-interest">Technical Support</span>
+          </div>
+          <div class="info-group">
+            <label>Language Preference</label>
+            <select id="language-select" class="language-select">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <h3><i class="fas fa-shield-alt"></i> Security</h3>
+        <div class="profile-info">
+          <div class="info-group">
+            <label>Password</label>
+            <span id="password-field">••••••••</span>
+          </div>
+          <div class="info-group">
+            <label>Last Login</label>
+            <span id="last-login">Today, 10:30 AM</span>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button class="btn btn-outline" id="change-password-btn"><i class="fas fa-key"></i> Change Password</button>
+          <button class="btn btn-primary" id="save-changes-btn"><i class="fas fa-save"></i> Save Changes</button>
+        </div>
+      </div>
+
+      <div id="admin-approval-section" class="profile-section">
+        <h3><i class="fas fa-user-cog"></i> Admin Requests</h3>
+        <div class="requests-list" id="admin-requests">
+          <p>No pending requests</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upgrade Request Modal -->
+  <div id="upgrade-modal" class="modal-overlay">
+    <div class="upgrade-modal">
+      <h3><i class="fas fa-user-shield"></i> Request Admin Privileges</h3>
+      <div class="modal-content">
+        <p>By requesting admin access, you'll need to provide justification for why you need these privileges.</p>
+        <textarea id="justification" placeholder="Please explain why you need admin access..." rows="4"></textarea>
+        <div class="modal-actions">
+          <button class="btn btn-outline" id="cancel-upgrade-btn">Cancel</button>
+          <button class="btn btn-primary" id="submit-upgrade-btn">Submit Request</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="profile.js"></script>
+</body>
+</html>
